@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_news/db/localDb.dart';
 import 'package:the_news/model/Article.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,6 +15,19 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   bool _isBookMarked = false;
 
+  _checkBookmark() {
+    setState(() {
+      _isBookMarked = LocalDb().isArticleBookmarked(widget.article);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBookmark();
+    debugPrint("Is bookmarked: $_isBookMarked");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +36,10 @@ class _DetailsState extends State<Details> {
         actions: [
           IconButton(
             onPressed: () {
-              _isBookMarked = !_isBookMarked;
+              setState(() {
+                LocalDb().insertArticle(widget.article);
+                _checkBookmark();
+              });
             },
             icon: _isBookMarked
                 ? const Icon(Icons.bookmark)
@@ -54,7 +71,9 @@ class _DetailsState extends State<Details> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: Text(
-                  widget.article.title!,
+                  widget.article.title != null
+                      ? widget.article.title!
+                      : "Missing title",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20.0),
                 ),
@@ -64,7 +83,11 @@ class _DetailsState extends State<Details> {
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
-                child: Text(widget.article.description!),
+                child: Text(
+                  widget.article.description != null
+                      ? widget.article.description!
+                      : "Description not found!!",
+                ),
               ),
               const SizedBox(
                 height: 10.0,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:the_news/api/ApiService.dart';
+import 'package:provider/provider.dart';
 import 'package:the_news/components/ArticleListTile.dart';
+import 'package:the_news/provider/NewsProvider.dart';
+import 'package:the_news/utils/Constants.dart';
 
 import '../model/Article.dart';
-import '../utils/Constants.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,23 +14,27 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<List<Article>> articles;
   TextEditingController searchController = TextEditingController();
   bool clearSearch = false;
   int selectedItem = 0;
-
   String categoryDropDownValue = "general";
   String countryDropDownValue = "us";
   String languageDropDownValue = "en";
+  ExpansionTileController countryController = ExpansionTileController();
+  ExpansionTileController languageController = ExpansionTileController();
+  ExpansionTileController categoryController = ExpansionTileController();
 
   @override
   void initState() {
     super.initState();
-    articles = ApiService().getArticles();
+    final providerInstance = Provider.of<NewsProvider>(context, listen: false);
+    providerInstance.getArticles();
   }
 
   @override
   Widget build(BuildContext context) {
+    var newsProvider = context.read<NewsProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("The News"),
@@ -59,6 +64,7 @@ class _HomeState extends State<Home> {
                                   setState(() {
                                     clearSearch = false;
                                   });
+                                  newsProvider.resetRequest();
                                 },
                               )
                             : null,
@@ -67,10 +73,12 @@ class _HomeState extends State<Home> {
                         )),
                     textInputAction: TextInputAction.search,
                     onFieldSubmitted: (value) {
-                      setState(() {
-                        articles = ApiService().getSearchedArticles(
+                      /*setState(() {
+                         articles = ApiService().getSearchedArticles(
                             value.toLowerCase().trimRight());
-                      });
+                      });*/
+                      newsProvider
+                          .getSearchedArticles(value.toLowerCase().trimRight());
                     },
                     onChanged: (value) {
                       setState(() {
@@ -92,16 +100,15 @@ class _HomeState extends State<Home> {
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
                         builder: (BuildContext context) {
-                          return Container(
-                            height: 400.0,
-                            padding: const EdgeInsets.all(12.0),
+                          return SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
+                                  width: MediaQuery.of(context).size.width,
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -128,7 +135,46 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      child: DropdownButtonFormField<String>(
+                                      child: ExpansionTile(
+                                        controller: countryController,
+                                        title: const Text(
+                                          "Country",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                        onExpansionChanged: (isExpanded) {
+                                          setState(() {
+                                            //ToDo()
+                                          });
+                                        },
+                                        children: Constants.countries
+                                            .map((key, value) {
+                                              return MapEntry(
+                                                  key,
+                                                  RadioListTile(
+                                                      title: Text(value),
+                                                      value: value,
+                                                      controlAffinity:
+                                                          ListTileControlAffinity
+                                                              .trailing,
+                                                      groupValue:
+                                                          countryDropDownValue,
+                                                      onChanged:
+                                                          (selectedCountry) {
+                                                        setState(() {
+                                                          countryDropDownValue =
+                                                              selectedCountry!;
+                                                          countryController
+                                                              .collapse();
+                                                        });
+                                                      }));
+                                            })
+                                            .values
+                                            .toList(),
+                                      )
+                                      /*DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                                 borderRadius:
@@ -154,7 +200,8 @@ class _HomeState extends State<Home> {
                                             categoryDropDownValue = newValue!;
                                           });
                                         },
-                                      ),
+                                      )*/
+                                      ,
                                     ),
                                     const SizedBox(
                                       height: 10.0,
@@ -162,7 +209,46 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      child: DropdownButtonFormField<String>(
+                                      child: ExpansionTile(
+                                        controller: categoryController,
+                                        title: const Text(
+                                          "Category",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                        onExpansionChanged: (isExpanded) {
+                                          setState(() {
+                                            //ToDo()
+                                          });
+                                        },
+                                        children: Constants.categories
+                                            .map((key, value) {
+                                              return MapEntry(
+                                                  key,
+                                                  RadioListTile(
+                                                      title: Text(value),
+                                                      value: value,
+                                                      controlAffinity:
+                                                          ListTileControlAffinity
+                                                              .trailing,
+                                                      groupValue:
+                                                          categoryDropDownValue,
+                                                      onChanged:
+                                                          (selectedCategory) {
+                                                        setState(() {
+                                                          categoryDropDownValue =
+                                                              selectedCategory!;
+                                                          categoryController
+                                                              .collapse();
+                                                        });
+                                                      }));
+                                            })
+                                            .values
+                                            .toList(),
+                                      )
+                                      /* DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                                 borderRadius:
@@ -188,7 +274,8 @@ class _HomeState extends State<Home> {
                                             countryDropDownValue = value!;
                                           });
                                         },
-                                      ),
+                                      )*/
+                                      ,
                                     ),
                                     const SizedBox(
                                       height: 10.0,
@@ -196,7 +283,47 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      child: DropdownButtonFormField<String>(
+                                      child: SingleChildScrollView(
+                                        child: ExpansionTile(
+                                          controller: languageController,
+                                          title: const Text(
+                                            "Language",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18.0),
+                                          ),
+                                          onExpansionChanged: (isExpanded) {
+                                            setState(() {
+                                              //ToDo()
+                                            });
+                                          },
+                                          children: Constants.languages
+                                              .map((key, value) {
+                                                return MapEntry(
+                                                    key,
+                                                    RadioListTile(
+                                                        title: Text(value),
+                                                        value: value,
+                                                        controlAffinity:
+                                                            ListTileControlAffinity
+                                                                .trailing,
+                                                        groupValue:
+                                                            languageDropDownValue,
+                                                        onChanged:
+                                                            (selectedCategory) {
+                                                          setState(() {
+                                                            languageDropDownValue =
+                                                                selectedCategory!;
+                                                            languageController
+                                                                .collapse();
+                                                          });
+                                                        }));
+                                              })
+                                              .values
+                                              .toList(),
+                                        ),
+                                      )
+                                      /*DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                                 borderRadius:
@@ -221,7 +348,8 @@ class _HomeState extends State<Home> {
                                             languageDropDownValue = value!;
                                           });
                                         },
-                                      ),
+                                      )*/
+                                      ,
                                     )
                                   ],
                                 ),
@@ -254,15 +382,10 @@ class _HomeState extends State<Home> {
                                           onPressed: () {
                                             debugPrint(
                                                 "$categoryDropDownValue, $countryDropDownValue, $languageDropDownValue");
-                                            setState(() {
-                                              articles = ApiService()
-                                                  .getFilteredArticles(
-                                                      categoryDropDownValue,
-                                                      countryDropDownValue /*,
-                                                      languageDropDownValue*/
-                                                      );
-                                              Navigator.pop(context);
-                                            });
+                                            newsProvider.getFilteredArticles(
+                                                categoryDropDownValue,
+                                                countryDropDownValue);
+                                            Navigator.pop(context);
                                           },
                                           child: const Text("Show Result"),
                                         ),
@@ -286,27 +409,56 @@ class _HomeState extends State<Home> {
             height: 10.0,
           ),
           Expanded(
-            child: FutureBuilder(
-                future: articles,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Article>> snapshot) {
-                  if (snapshot.hasData) {
-                    List<Article>? articles = snapshot.data;
-                    return ListView.builder(
-                      itemBuilder: (context, index) =>
-                          articleListTile(context, articles![index]),
-                      itemCount: articles?.length,
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text("${snapshot.error}"),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return Center(child: Container());
-                }),
+            child: Consumer<NewsProvider>(builder: (context, value, child) {
+              if (value.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (value.error.isNotEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(value.error),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
+                      TextButton(
+                        style:
+                            TextButton.styleFrom(foregroundColor: Colors.blue),
+                        onPressed: () {
+                          switch (newsProvider.currentRequest) {
+                            case 0:
+                              newsProvider.getArticles();
+                            case 1:
+                              newsProvider.getSearchedArticles(searchController
+                                  .text
+                                  .toLowerCase()
+                                  .trimRight());
+                            case 2:
+                              newsProvider.getFilteredArticles(
+                                  categoryDropDownValue, countryDropDownValue);
+                          }
+                        },
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                List<Article> articles = [];
+                if (value.currentRequest == 0) {
+                  articles = value.defaultArticles;
+                } else if (value.currentRequest == 1) {
+                  articles = value.searchedArticles;
+                } else {
+                  articles = value.filteredArticles;
+                }
+                return ListView.builder(
+                  itemBuilder: (context, index) =>
+                      articleListTile(context, articles[index]),
+                  itemCount: articles.length,
+                );
+              }
+            }),
           ),
         ],
       ),
