@@ -58,25 +58,21 @@ class _HomeState extends State<Home> {
                         ),
                         suffixIcon: clearSearch
                             ? IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  searchController.clear();
-                                  setState(() {
-                                    clearSearch = false;
-                                  });
-                                  newsProvider.resetRequest();
-                                },
-                              )
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            searchController.clear();
+                            setState(() {
+                              clearSearch = false;
+                            });
+                            newsProvider.resetRequest();
+                          },
+                        )
                             : null,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         )),
                     textInputAction: TextInputAction.search,
                     onFieldSubmitted: (value) {
-                      /*setState(() {
-                         articles = ApiService().getSearchedArticles(
-                            value.toLowerCase().trimRight());
-                      });*/
                       newsProvider
                           .getSearchedArticles(value.toLowerCase().trimRight());
                     },
@@ -108,23 +104,31 @@ class _HomeState extends State<Home> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "Filter",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        icon: const Icon(Icons.close),
-                                      )
-                                    ],
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 20),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "Filter",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20.0),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: const Icon(Icons.close),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
@@ -133,7 +137,10 @@ class _HomeState extends State<Home> {
                                 Column(
                                   children: [
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width *
                                           0.9,
                                       child: ExpansionTile(
                                         controller: countryController,
@@ -151,63 +158,38 @@ class _HomeState extends State<Home> {
                                         },
                                         children: Constants.countries
                                             .map((key, value) {
-                                              return MapEntry(
-                                                  key,
-                                                  RadioListTile(
-                                                      title: Text(value),
-                                                      value: value,
-                                                      controlAffinity:
-                                                          ListTileControlAffinity
-                                                              .trailing,
-                                                      groupValue:
-                                                          countryDropDownValue,
-                                                      onChanged:
-                                                          (selectedCountry) {
-                                                        setState(() {
-                                                          countryDropDownValue =
-                                                              selectedCountry!;
-                                                          countryController
-                                                              .collapse();
-                                                        });
-                                                      }));
-                                            })
+                                          return MapEntry(
+                                              key,
+                                              RadioListTile(
+                                                  title: Text(value),
+                                                  value: key,
+                                                  controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .trailing,
+                                                  groupValue:
+                                                  countryDropDownValue,
+                                                  onChanged:
+                                                      (selectedCountry) {
+                                                    setState(() {
+                                                      countryDropDownValue =
+                                                      selectedCountry!;
+                                                      countryController
+                                                          .collapse();
+                                                    });
+                                                  }));
+                                        })
                                             .values
                                             .toList(),
-                                      )
-                                      /*DropdownButtonFormField<String>(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0))),
-                                        value: categoryDropDownValue,
-                                        items: Constants.categories
-                                            .map(
-                                              (String categoryKey,
-                                                  String value) {
-                                                return MapEntry(
-                                                    categoryKey,
-                                                    DropdownMenuItem(
-                                                      value: categoryKey,
-                                                      child: Text(value),
-                                                    ));
-                                              },
-                                            )
-                                            .values
-                                            .toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            categoryDropDownValue = newValue!;
-                                          });
-                                        },
-                                      )*/
-                                      ,
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: 10.0,
                                     ),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width *
                                           0.9,
                                       child: ExpansionTile(
                                         controller: categoryController,
@@ -225,63 +207,38 @@ class _HomeState extends State<Home> {
                                         },
                                         children: Constants.categories
                                             .map((key, value) {
-                                              return MapEntry(
-                                                  key,
-                                                  RadioListTile(
-                                                      title: Text(value),
-                                                      value: value,
-                                                      controlAffinity:
-                                                          ListTileControlAffinity
-                                                              .trailing,
-                                                      groupValue:
-                                                          categoryDropDownValue,
-                                                      onChanged:
-                                                          (selectedCategory) {
-                                                        setState(() {
-                                                          categoryDropDownValue =
-                                                              selectedCategory!;
-                                                          categoryController
-                                                              .collapse();
-                                                        });
-                                                      }));
-                                            })
+                                          return MapEntry(
+                                              key,
+                                              RadioListTile(
+                                                  title: Text(value),
+                                                  value: key,
+                                                  controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .trailing,
+                                                  groupValue:
+                                                  categoryDropDownValue,
+                                                  onChanged:
+                                                      (selectedCategory) {
+                                                    setState(() {
+                                                      categoryDropDownValue =
+                                                      selectedCategory!;
+                                                      categoryController
+                                                          .collapse();
+                                                    });
+                                                  }));
+                                        })
                                             .values
                                             .toList(),
-                                      )
-                                      /* DropdownButtonFormField<String>(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0))),
-                                        value: countryDropDownValue,
-                                        items: Constants.countries
-                                            .map(
-                                              (countryKey,
-                                                  String countryValue) {
-                                                return MapEntry(
-                                                    countryKey,
-                                                    DropdownMenuItem(
-                                                      value: countryKey,
-                                                      child: Text(countryValue),
-                                                    ));
-                                              },
-                                            )
-                                            .values
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            countryDropDownValue = value!;
-                                          });
-                                        },
-                                      )*/
-                                      ,
+                                      ),
                                     ),
                                     const SizedBox(
                                       height: 10.0,
                                     ),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width *
                                           0.9,
                                       child: SingleChildScrollView(
                                         child: ExpansionTile(
@@ -299,57 +256,36 @@ class _HomeState extends State<Home> {
                                           },
                                           children: Constants.languages
                                               .map((key, value) {
-                                                return MapEntry(
-                                                    key,
-                                                    RadioListTile(
-                                                        title: Text(value),
-                                                        value: value,
-                                                        controlAffinity:
-                                                            ListTileControlAffinity
-                                                                .trailing,
-                                                        groupValue:
-                                                            languageDropDownValue,
-                                                        onChanged:
-                                                            (selectedCategory) {
-                                                          setState(() {
-                                                            languageDropDownValue =
-                                                                selectedCategory!;
-                                                            languageController
-                                                                .collapse();
-                                                          });
-                                                        }));
-                                              })
+                                            return MapEntry(
+                                                key,
+                                                RadioListTile(
+                                                    title: Text(value),
+                                                    value: key,
+                                                    controlAffinity:
+                                                    ListTileControlAffinity
+                                                        .trailing,
+                                                    groupValue:
+                                                    languageDropDownValue,
+                                                    onChanged:
+                                                        (selectedCategory) {
+                                                      setState(() {
+                                                        languageDropDownValue =
+                                                        selectedCategory!; /*Constants
+                                                                .languages
+                                                                .entries
+                                                                .firstWhere((element) =>
+                                                                    element
+                                                                        .value ==
+                                                                    selectedCategory!) as String;*/
+                                                        languageController
+                                                            .collapse();
+                                                      });
+                                                    }));
+                                          })
                                               .values
                                               .toList(),
                                         ),
-                                      )
-                                      /*DropdownButtonFormField<String>(
-                                        decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0))),
-                                        value: languageDropDownValue,
-                                        items: Constants.languages
-                                            .map(
-                                              (languageKey, String value) {
-                                                return MapEntry(
-                                                    languageKey,
-                                                    DropdownMenuItem(
-                                                      value: languageKey,
-                                                      child: Text(value),
-                                                    ));
-                                              },
-                                            )
-                                            .values
-                                            .toList(),
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            languageDropDownValue = value!;
-                                          });
-                                        },
-                                      )*/
-                                      ,
+                                      ),
                                     )
                                   ],
                                 ),
@@ -358,17 +294,20 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.9,
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.9,
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       OutlinedButton(
                                         onPressed: () {
                                           setState(() {
                                             languageDropDownValue = "English";
                                             countryDropDownValue =
-                                                "United States";
+                                            "United States";
                                             categoryDropDownValue = "General";
                                           });
                                         },
@@ -392,6 +331,9 @@ class _HomeState extends State<Home> {
                                       ),
                                     ],
                                   ),
+                                ),
+                                const SizedBox(
+                                  height: 20.0,
                                 ),
                               ],
                             ),
@@ -423,7 +365,7 @@ class _HomeState extends State<Home> {
                       ),
                       TextButton(
                         style:
-                            TextButton.styleFrom(foregroundColor: Colors.blue),
+                        TextButton.styleFrom(foregroundColor: Colors.blue),
                         onPressed: () {
                           switch (newsProvider.currentRequest) {
                             case 0:
@@ -452,11 +394,18 @@ class _HomeState extends State<Home> {
                 } else {
                   articles = value.filteredArticles;
                 }
-                return ListView.builder(
-                  itemBuilder: (context, index) =>
-                      articleListTile(context, articles[index]),
-                  itemCount: articles.length,
-                );
+
+                if (articles.isNotEmpty) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) =>
+                        articleListTile(context, articles[index]),
+                    itemCount: articles.length,
+                  );
+                } else {
+                  return const Center(
+                    child: Text("No news found! try again"),
+                  );
+                }
               }
             }),
           ),
